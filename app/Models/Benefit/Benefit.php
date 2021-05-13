@@ -52,6 +52,8 @@ class Benefit extends BaseModel
         }
 
         Benefit::insert($insertData);
+
+        return ;
     }
 
 
