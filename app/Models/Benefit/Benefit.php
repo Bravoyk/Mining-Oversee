@@ -16,7 +16,7 @@ class Benefit extends BaseModel
         // 元数据采集规则
         $rules = [
             'worker_name' => ['.worker-name span', 'text'],
-            'unit'        => ['.hash-15m span', 'text'],
+            'unit'        => ['.hash-24h span', 'text'],
             'hash-15m'    => ['.hash-15m', 'text', '-span'],
             'hash-24h'    => ['.hash-24h', 'text', '-span'],
         ];
