@@ -53,13 +53,73 @@ class Benefit extends BaseModel
 
         Benefit::insert($insertData);
 
-        return ;
+        return;
     }
 
 
     public function addRecode()
     {
 
+    }
+
+    public function checkPoint()
+    {
+        $url = 'https://www.f2pool.com/eth/0xcB2EE41D384aa5c71dDBbD8137F273823e5A45cC';
+
+
+        $ql = QueryList::get($url);
+
+        $resutl = [];
+
+        $resutl['all_eth'] = $ql->find('.row-revenue .order-lg-1 .line')->text();
+        $resutl['balance'] = $ql->find('.row-revenue .order-lg-3 .line')->text();
+
+        dd($resutl);
+//        $resutl['author'] = $ql->find('#author_baidu>strong')->text();
+//        $resutl['content'] = $ql->find('.post_content')->html();
+
+
+        // 元数据采集规则
+        $rules = [
+            'all_eth' => ['.item-val', 'text'],
+        ];
+
+        $range = '.row-revenue div.item';
+        $data  = QueryList::get($url)->rules($rules)->range($range)->query()->getData();
+
+        dd($data);
+
+
+        $allMiner = Miner::all()->toArray();
+        $allMiner = array_column($allMiner, null, 'name');
+
+        $insertData = [];
+        foreach ($data as $k => &$v) {
+            if (array_key_exists($v['worker_name'], $allMiner)) {
+                $insertData[] = [
+                    'mid'                => $allMiner[$v['worker_name']]['id'],
+                    'benefit_15_minutes' => $v['hash-15m'],
+                    'benefit_24_hour'    => $v['hash-24h'],
+                    'last_update'        => date('Y-m-d H:i:s'),
+                    'unit'               => $v['unit']
+                ];
+                unset($allMiner[$v['worker_name']]);
+            }
+        }
+
+        foreach ($allMiner as $k => &$v) {
+            $insertData[] = [
+                'mid'                => $v['id'],
+                'benefit_15_minutes' => 0,
+                'benefit_24_hour'    => 0,
+                'last_update'        => date('Y-m-d H:i:s'),
+                'unit'               => ''
+            ];
+        }
+
+        Benefit::insert($insertData);
+
+        return;
     }
 
 }

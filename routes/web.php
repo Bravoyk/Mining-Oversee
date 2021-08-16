@@ -18,4 +18,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/getBenefit', [BenefitController::class, 'index']);
+Route::get('/getBenefit', [BenefitController::class, 'getBenefit']);
+Route::get('/detail', [BenefitController::class, 'detail']);
+Route::get('/checkPoint', [BenefitController::class, 'checkPoint']);
